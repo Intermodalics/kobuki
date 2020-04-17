@@ -64,7 +64,7 @@ void KobukiRos::publishSensorState()
     if (sensor_state_publisher.getNumSubscribers() > 0) {
       kobuki_msgs::SensorState state;
       CoreSensors::Data data = kobuki.getCoreSensorData();
-      state.header.stamp = ros::Time::now();
+      state.header.stamp = ros::Time::now() + time_offset_;
       state.time_stamp = data.time_stamp; // firmware time stamp
       state.bumper = data.bumper;
       state.wheel_drop = data.wheel_drop;
@@ -109,7 +109,7 @@ void KobukiRos::publishWheelState()
 
   if (ros::ok())
   {
-    joint_states.header.stamp = ros::Time::now();
+    joint_states.header.stamp = ros::Time::now() + time_offset_;
     joint_state_publisher.publish(joint_states);
   }
 }
@@ -124,7 +124,7 @@ void KobukiRos::publishInertia()
       sensor_msgs::ImuPtr msg(new sensor_msgs::Imu);
 
       msg->header.frame_id = "gyro_link";
-      msg->header.stamp = ros::Time::now();
+      msg->header.stamp = ros::Time::now() + time_offset_;
 
       msg->orientation = tf::createQuaternionMsgFromRollPitchYaw(0.0, 0.0, kobuki.getHeading());
 
@@ -157,7 +157,7 @@ void KobukiRos::publishRawInertia()
     sensor_msgs::ImuPtr msg(new sensor_msgs::Imu);
     ThreeAxisGyro::Data data = kobuki.getRawInertiaData();
 
-    ros::Time now = ros::Time::now();
+    ros::Time now = ros::Time::now() + time_offset_;
     ros::Duration interval(0.01); // Time interval between each sensor reading.
     const double digit_to_dps = 0.00875; // digit to deg/s ratio, comes from datasheet of 3d gyro[L3G4200D].
     unsigned int length = data.followed_data_length/3;
@@ -193,7 +193,7 @@ void KobukiRos::publishDockIRData()
       kobuki_msgs::DockInfraRedPtr msg(new kobuki_msgs::DockInfraRed);
 
       msg->header.frame_id = "dock_ir_link";
-      msg->header.stamp = ros::Time::now();
+      msg->header.stamp = ros::Time::now() + time_offset_;
 
       msg->data.push_back( data.docking[0] );
       msg->data.push_back( data.docking[1] );

@@ -148,6 +148,8 @@ bool KobukiRos::init(ros::NodeHandle& nh, ros::NodeHandle& nh_pub)
     return false;
   }
 
+  time_offset_ = ros::Duration(nh.param("time_offset", 0.0));
+
   /*********************
    ** Joint States
    **********************/
@@ -347,4 +349,3 @@ void KobukiRos::subscribeTopics(ros::NodeHandle& nh)
 
 
 } // namespace kobuki
-

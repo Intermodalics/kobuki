@@ -100,6 +100,7 @@ private:
   Odometry odometry;
   bool cmd_vel_timed_out_; // stops warning spam when cmd_vel flags as timed out more than once in a row
   bool serial_timed_out_; // stops warning spam when serial connection timed out more than once in a row
+  ros::Duration time_offset_; // time offset applied to all published header stamps to compensate the transport delay
 
   /*********************
    ** Ros Comms

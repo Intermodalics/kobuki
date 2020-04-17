@@ -36,6 +36,9 @@ void Odometry::init(ros::NodeHandle& nh, const std::string& name) {
   cmd_vel_timeout.fromSec(timeout);
   ROS_INFO_STREAM("Kobuki : Velocity commands timeout: " << cmd_vel_timeout << " seconds [" << name << "].");
 
+  time_offset_ = ros::Duration(nh.param("time_offset", 0.0));
+  ROS_INFO_STREAM("Kobuki : Time offset: " << time_offset_.toSec() << " seconds [" << name << "].");
+
   if (!nh.getParam("odom_frame", odom_frame)) {
     ROS_WARN_STREAM("Kobuki : no param server setting for odom_frame, using default [" << odom_frame << "][" << name << "].");
   } else {
@@ -112,7 +115,7 @@ void Odometry::publishTransform(const geometry_msgs::Quaternion &odom_quat)
   if (publish_tf == false)
     return;
 
-  odom_trans.header.stamp = ros::Time::now();
+  odom_trans.header.stamp = ros::Time::now() + time_offset_;
   odom_trans.transform.translation.x = pose.x();
   odom_trans.transform.translation.y = pose.y();
   odom_trans.transform.translation.z = 0.0;
@@ -127,7 +130,7 @@ void Odometry::publishOdometry(const geometry_msgs::Quaternion &odom_quat,
   nav_msgs::OdometryPtr odom(new nav_msgs::Odometry);
 
   // Header
-  odom->header.stamp = ros::Time::now();
+  odom->header.stamp = ros::Time::now() + time_offset_;
   odom->header.frame_id = odom_frame;
   odom->child_frame_id = base_frame;
 
