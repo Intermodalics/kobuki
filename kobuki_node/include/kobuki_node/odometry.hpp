@@ -56,6 +56,7 @@ private:
   ros::Time last_cmd_time;
   bool publish_tf;
   bool use_imu_heading;
+  ros::Duration time_offset_; // time offset applied to all published header stamps to compensate the transport delay
   tf::TransformBroadcaster odom_broadcaster;
   ros::Publisher odom_publisher;
 
